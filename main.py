@@ -16,13 +16,13 @@ def list_post():
 
 if __name__ == '__main__':
     app.run()
-
-password = b"test"
-salt = bcrypt.gensalt(rounds=15)
-hash_pass = bcrypt.hashpw(password, salt)
-print(hash_pass)
-
-if bcrypt.checkpw(password, hash_pass):
-   print("Password is correct")
-else:
-   print("Password is incorrect")
+#
+# password = b"test"
+# salt = bcrypt.gensalt(rounds=15)
+# hash_pass = bcrypt.hashpw(password, salt)
+# print(hash_pass)
+#
+# if bcrypt.checkpw(password, hash_pass):
+#    print("Password is correct")
+# else:
+#    print("Password is incorrect")
