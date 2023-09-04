@@ -15,7 +15,7 @@ def list_post():
     return jsonify(results = predictions)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000)
+    app.run()
 
 password = b"test"
 salt = bcrypt.gensalt(rounds=15)
