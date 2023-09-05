@@ -1,21 +1,14 @@
-import config
-import bcrypt
-from flask import Flask, request, jsonify, render_template, url_for
-app = Flask(__name__)
+from application import app
 
-@app.route('/')
-def home():
-    return 'Hello World'
+# @app.route('/login', methods=['POST', 'GET'])
+# def login():
+#     if request.method == 'POST':
+#         user = request.form['nm']
+#         return redirect(url_for('success', name=user))
+#     else:
+#         user = request.args.get('nm')
+#         return redirect(url_for('success', name=user))
 
-@app.route('/predict_api', methods=["GET","POST"])
-def list_post():
-    json_body = request.get_json()
-    predictions = 2 * json_body[0]
-    predictions = list(predictions)
-    return jsonify(results = predictions)
-
-if __name__ == '__main__':
-    app.run()
 #
 # password = b"test"
 # salt = bcrypt.gensalt(rounds=15)
