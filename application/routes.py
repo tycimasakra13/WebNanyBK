@@ -1,4 +1,4 @@
-from application import app, db
+from application import app
 from flask import render_template, request, Response, json
 
 test_data = [{"id": "1", "title": "test1"}, {"id": "2", "title": "test2"}]
