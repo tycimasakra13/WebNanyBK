@@ -1,5 +1,7 @@
 from application import app
-from flask import render_template, request, Response, json
+from flask import render_template, request, Response, json, redirect, flash
+
+from application.forms import LoginForm, RegisterForm
 
 test_data = [{"id": "1", "title": "test1"}, {"id": "2", "title": "test2"}]
 
@@ -26,9 +28,16 @@ def register():
     return render_template("register.html", register=True)
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template("login.html", login=True)
+    form = LoginForm()
+    if form.validate_on_submit():
+        if request.form.get("email") == "test@uta.com":
+            flash("Successfully logged in", "success")
+            return redirect("/index")
+        else:
+            flash("Login error", "danger")
+    return render_template("login.html", title="Login", form=form, login=True)
 
 
 @app.route('/enrollment', methods=["GET", "POST"])

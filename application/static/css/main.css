@@ -100,4 +100,8 @@ footer {
   opacity: 1;
 }
 
+.error-message {
+  color: darkred;
+}
+
 /*# sourceMappingURL=main.css.map */
