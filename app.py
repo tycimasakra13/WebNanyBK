@@ -1,5 +1,8 @@
 from application import app
 
+if __name__ == '__main__':
+    app.run()
+
 # @app.route('/login', methods=['POST', 'GET'])
 # def login():
 #     if request.method == 'POST':
