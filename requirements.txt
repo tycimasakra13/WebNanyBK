@@ -11,3 +11,5 @@ Werkzeug           2.3.7
 wheel              0.38.4
 WTForms            3.0.1
 zipp               3.16.2
+
+flask~=2.3.3
