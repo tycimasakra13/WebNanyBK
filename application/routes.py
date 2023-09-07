@@ -2,12 +2,9 @@ from flask.json import dump
 from sqlalchemy import MetaData
 
 from application import app, db
-from flask import render_template, request, Response, json, redirect, flash, url_for
-
+from flask import render_template, request, Response, json, redirect, flash, url_for, session
 from application.forms import LoginForm, RegisterForm
 from application.models import Users
-
-test_data = [{"id": "1", "title": "test1"}, {"id": "2", "title": "test2"}]
 
 
 @app.route('/')
@@ -21,14 +18,10 @@ def index():
     return render_template("index.html", index=True)
 
 
-@app.route('/test/')
-@app.route('/test/<id>')
-def test(id="1"):
-    return render_template("test.html", testData=test_data, test=True, id=id)
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if session.get('username'):
+        return redirect(url_for('index'))
     form = RegisterForm()
     if form.validate_on_submit():
         user_id = Users.query.count()
@@ -52,6 +45,9 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if session.get('username'):
+        return redirect(url_for('index'))
+
     form = LoginForm()
     if form.validate_on_submit():
         email = form.email.data
@@ -59,29 +55,24 @@ def login():
 
         user = Users.query.filter_by(e_mail=email).first()
         if user and user.get_password(password):
-            flash("Successfully logged in", "success")
+
+            user_agent = request.headers.get('User-Agent')
+            user_agent = user_agent.lower()
+
+            flash(f"Successfully logged in {user_agent}", "success")
+            session['user_id'] = user.id
+            session['username'] = user.first_name
             return redirect("/index")
         else:
             flash("Login error", "danger")
     return render_template("login.html", title="Login", form=form, login=True)
 
 
-@app.route('/enrollment', methods=["GET", "POST"])
-def enrollment():
-    id = request.form.get('id')
-    title = request.form.get('title')
-    return render_template("enrollment.html", enrollment=True, data={"id": id, "title": title})
-
-
-@app.route("/api/")
-@app.route("/api/<idx>")
-def api(idx=None):
-    if (idx == None):
-        jdata = test_data
-    else:
-        jdata = test_data[int(idx)]
-
-    return Response(json.dumps(jdata), mimetype="application/json")
+@app.route('/logout')
+def logout():
+    session['user_id'] = False
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
 
 @app.route("/users", methods=['GET'])
@@ -100,11 +91,21 @@ def user():
 
 @app.route('/user')
 def get_users():
-    print("schema" + str(db.metadata.schema))
-    __table_name__ = {'users'}
-    __table_args__ = {'schema': 'wn'}
-    db.metadata.schema = 'wn'
-    print("schema" + str(db.metadata.schema))
-    users = Users.query.all()
-    return render_template("/user.html", users=users)
+    if not session.get('username'):
+        return redirect(url_for('login'))
 
+    user_id = session.get('user_id')
+    print(user_id)
+    users = Users.query.all()
+    return render_template("user.html", users=users)
+
+
+@app.route('/devices/', methods=['GET', 'POST'])
+def get_devices():
+    if not session.get('username'):
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    print(user_id)
+    users = Users.query.all()
+    return render_template("devices.html", title="Login", users=users, devices=True)

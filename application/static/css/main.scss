@@ -56,6 +56,10 @@ input[type=text]:focus, input[type=password]:focus {
   outline: none;
 }
 
+.container {
+  position: relative;
+}
+
 .top-container {
   background: #ccc;
   padding: 5px;
@@ -103,4 +107,12 @@ footer {
 
 .error-message {
   color: darkred;
+}
+
+.user {
+  float: right;
+  position: absolute;
+  font-size: 15px;
+  padding: 10px;
+  right:0;
 }
