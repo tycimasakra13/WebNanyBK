@@ -163,21 +163,21 @@ def devices_watch(platform):
         return redirect(url_for('login'))
 
     return render_template('/watch.html', platform=platform)
-
-def gen_frames():
-    camera = cv2.VideoCapture(0)
-    #camera = VideoStream(src=0).start()
-    camera.grab()
-    print(camera.isOpened())
-    while True:
-        success, frame = camera.read()
-        if not success:
-            break
-        else:
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-@app.route('/camera')
-def video_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+#
+# def gen_frames():
+#     camera = cv2.VideoCapture(0)
+#     #camera = VideoStream(src=0).start()
+#     camera.grab()
+#     print(camera.isOpened())
+#     while True:
+#         success, frame = camera.read()
+#         if not success:
+#             break
+#         else:
+#             ret, buffer = cv2.imencode('.jpg', frame)
+#             frame = buffer.tobytes()
+#             yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+#
+# @app.route('/camera')
+# def video_feed():
+#     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
