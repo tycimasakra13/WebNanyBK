@@ -5,7 +5,7 @@ from application import app, db
 from flask import render_template, request, Response, json, redirect, flash, url_for, session
 from application.forms import LoginForm, RegisterForm, AddDevice
 from application.models import Users, Devices
-
+import cv2
 
 @app.route('/')
 def home():
@@ -19,6 +19,8 @@ def index():
     if session.get('username'):
         login_state = True
 
+    camera = cv2.VideoCapture(0)
+    camera.grab()
     return render_template("index.html", index=True, login=login_state)
 
 
