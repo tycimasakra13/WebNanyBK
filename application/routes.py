@@ -1,6 +1,8 @@
 from flask.json import dump
 from sqlalchemy import MetaData
 import json, time
+
+from imutils.video import VideoStream
 from application import app, db
 from flask import render_template, request, Response, json, redirect, flash, url_for, session
 from application.forms import LoginForm, RegisterForm, AddDevice
@@ -164,7 +166,9 @@ def devices_watch(platform):
 
 def gen_frames():
     camera = cv2.VideoCapture(0)
+    #camera = VideoStream(src=0).start()
     camera.grab()
+    print(camera.isOpened())
     while True:
         success, frame = camera.read()
         if not success:
