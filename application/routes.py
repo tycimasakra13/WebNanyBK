@@ -1,6 +1,6 @@
 from flask.json import dump
 from sqlalchemy import MetaData
-
+import json, time
 from application import app, db
 from flask import render_template, request, Response, json, redirect, flash, url_for, session
 from application.forms import LoginForm, RegisterForm, AddDevice
@@ -19,8 +19,6 @@ def index():
     if session.get('username'):
         login_state = True
 
-    camera = cv2.VideoCapture(0)
-    camera.grab()
     return render_template("index.html", index=True, login=login_state)
 
 
@@ -30,15 +28,12 @@ def register():
         return redirect(url_for('index'))
     form = RegisterForm()
     if form.validate_on_submit():
-        user_id = Users.query.count()
-        user_id += 1
-
         first_name = form.first_name.data
         last_name = form.last_name.data
         email = form.email.data
         password = form.password.data
 
-        new_user = Users(id=user_id, e_mail=email, first_name=first_name, last_name=last_name)
+        new_user = Users(e_mail=email, first_name=first_name, last_name=last_name)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
@@ -99,13 +94,10 @@ def add_device():
     form = AddDevice(user_id=user_id)
 
     if form.validate_on_submit():
-        device_id = Devices.query.count()
-        device_id += 1
-
         device_name = form.device_name.data
         device_platform = form.device_platform.data
 
-        new_device = Devices(device_id=device_id, device_name=device_name, device_platform=device_platform, user_id=user_id)
+        new_device = Devices(device_name=device_name, device_platform=device_platform, user_id=user_id)
         db.session.add(new_device)
         db.session.commit()
 
@@ -132,7 +124,7 @@ def get_devices():
     if not session.get('username'):
         return redirect(url_for('login'))
 
-    devicesList = Devices.query.all()
+    devicesList = Devices.query.order_by(Devices.device_id).all()
     return render_template("devices.html", title="Devices", data=devicesList, devices=True)
 
 
@@ -170,4 +162,18 @@ def devices_watch(platform):
 
     return render_template('/watch.html', platform=platform)
 
+def gen_frames():
+    camera = cv2.VideoCapture(0)
+    camera.grab()
+    while True:
+        success, frame = camera.read()
+        if not success:
+            break
+        else:
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+@app.route('/camera')
+def video_feed():
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')

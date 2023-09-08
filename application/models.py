@@ -1,3 +1,4 @@
+import cv2
 from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import Any
 from sqlalchemy.orm import relationship, backref
@@ -47,3 +48,14 @@ class Devices(db.Model):
             'e_mail': self.e_mail,
             'password': self.password
         }
+
+class Camera:
+    def __init__(self, fps=20, video_source=0):
+        print(f"Initializing camera class with {fps} fps and video_source={video_source}")
+        self.fps = fps
+        self.video_source = video_source
+        self.camera = cv2.VideoCapture(self.video_source)
+        # We want a max of 5s history to be stored, thats 5s*fps
+        self.max_frames = 5 * self.fps
+        self.frames = []
+        self.isrunning = False
