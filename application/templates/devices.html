@@ -2,31 +2,46 @@
 
 {% block content %}
 
-<h1>Users</h1>
+<h1>{{ title }}</h1>
 
+<a href="/add_device" class="btn btn-primary btn-add">Add Device</a>
 
 <div>
     <table class="table table-hover">
         <thead>
         <tr>
-            <th scope="col">User ID</th>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-            <th scope="col">E-mail</th>
-            <th scope="col">Edit</th>
+            <th scope="col">Device ID</th>
+            <th scope="col">Device Name</th>
+            <th scope="col">Device Platform</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
         </tr>
         </thead>
         <tbody>
 
         <!-- Construct the rest of courses here -->
-        {% for usr in users %}
+        {% for device in data %}
+        {% set disabled = True if not session['device'] == device["device_platform"]|lower else False %}
+
             <tr>
-                <td scope="row">{{ usr["id"] }}</td>
-                <td>{{ usr["first_name"] }}</td>
-                <td>{{ usr["last_name"] }}</td>
-                <td>{{ usr["e_mail"] }}</td>
-                <td></td>
+                <td scope="row">{{ device["device_id"] }}</td>
+                <td>{{ device["device_name"] }}</td>
+                <td>{{ device["device_platform"] }}</td>
                 <td>
+                    <form action="{{url_for('devices_stream',platform=device['device_platform'])}}" method="POST">
+                        <button type="submit" class="btn btn-warning" {% if disabled %} disabled {% endif %}>Stream</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="{{url_for('devices_watch',platform=device['device_platform'])}}" method="POST">
+                        <button type="submit" class="btn btn-info">Watch</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="{{url_for('delete_device')}}" method="POST">
+                        <input type="hidden" id="device_id" name="device_id" value="{{ device['device_id'] }}">
+                        <button type="submit" class="btn btn-dark">Delete</button>
+                    </form>
                 </td>
             </tr>
         {% endfor %}

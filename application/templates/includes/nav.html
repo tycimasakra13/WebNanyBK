@@ -2,7 +2,7 @@
   <nav>
     <ul class="nav nav-pills">
       <li class="nav-item"><a href="{{ url_for('index') }}" class="nav-link {% if index %}active{% endif %}">Home</a></li>
-      <li class="nav-item"><a href="/devices" class="nav-link {% if devices %}active{% endif %}">Devices</a></li>
+      <li class="nav-item"><a href="{{ url_for('get_devices') }}" class="nav-link {% if devices %}active{% endif %}">Devices</a></li>
 
       {% if not session['username'] %}
         <li class="nav-item"><a href="{{ url_for('register') }}" class="nav-link {% if register %}active{% endif %}">Register</a></li>

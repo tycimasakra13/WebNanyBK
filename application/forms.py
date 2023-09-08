@@ -1,7 +1,9 @@
+from json import dump
+
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, HiddenField, SelectField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
-from application.models import Users
+from application.models import Users, Devices
 
 
 class LoginForm(FlaskForm):
@@ -24,3 +26,20 @@ class RegisterForm(FlaskForm):
             raise ValidationError("Email already in use")
 
 
+def validate_device(form, field):
+    print(str(form))
+    print(str(field.data))
+    device = Devices.query.filter_by(device_platform=field.data).first()
+    print("device" + str(device))
+    if device:
+        raise ValidationError(f"Device for {field.data} already exists")
+
+
+class AddDevice(FlaskForm):
+    choices = ['Web', 'Android', 'iOS']
+    device_id = HiddenField()
+    device_name = StringField("Device Name", validators=[DataRequired()])
+    #device_platform = StringField("Device Platform", validators=[DataRequired()])
+    device_platform = SelectField("Device Platform", coerce=str, choices=choices, validators=[DataRequired(), validate_device])
+    user_id = HiddenField()
+    submit = SubmitField("Add Device")

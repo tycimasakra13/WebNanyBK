@@ -3,8 +3,8 @@ from sqlalchemy import MetaData
 
 from application import app, db
 from flask import render_template, request, Response, json, redirect, flash, url_for, session
-from application.forms import LoginForm, RegisterForm
-from application.models import Users
+from application.forms import LoginForm, RegisterForm, AddDevice
+from application.models import Users, Devices
 
 
 @app.route('/')
@@ -15,7 +15,11 @@ def home():
 @app.route('/index')
 @app.route('/home')
 def index():
-    return render_template("index.html", index=True)
+    login_state = False
+    if session.get('username'):
+        login_state = True
+
+    return render_template("index.html", index=True, login=login_state)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -59,7 +63,16 @@ def login():
             user_agent = request.headers.get('User-Agent')
             user_agent = user_agent.lower()
 
-            flash(f"Successfully logged in {user_agent}", "success")
+            if "iphone" in user_agent:
+                session['device'] = "ios"
+            elif "android" in user_agent:
+                session['device'] = "android"
+            else:
+                session['device'] = "web"
+
+            print(session['device'])
+
+            flash(f"Successfully logged in, {user.first_name} ", "success")
             session['user_id'] = user.id
             session['username'] = user.first_name
             return redirect("/index")
@@ -75,18 +88,30 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route("/users", methods=['GET'])
-def user():
-    form = LoginForm()
-    try:
-        new_user = Users(id=3, first_name="asia", last_name="last_test", e_mail="test@test.pl", password="test")
-        db.session.add(new_user)
+@app.route("/add_device", methods=['GET', 'POST'])
+def add_device():
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    form = AddDevice(user_id=user_id)
+
+    if form.validate_on_submit():
+        device_id = Devices.query.count()
+        device_id += 1
+
+        device_name = form.device_name.data
+        device_platform = form.device_platform.data
+
+        new_device = Devices(device_id=device_id, device_name=device_name, device_platform=device_platform, user_id=user_id)
+        db.session.add(new_device)
         db.session.commit()
-        flash("user created", "success")
-        return redirect("/index")
-    except:
-        flash("user not saved", "danger")
-    return render_template("login.html", title="Login", form=form, login=True)
+
+        flash("Successfully added device", "success")
+        return redirect(url_for('get_devices'))
+
+    return render_template("add_device.html", title="Add Device", form=form)
+
 
 
 @app.route('/user')
@@ -100,12 +125,47 @@ def get_users():
     return render_template("user.html", users=users)
 
 
-@app.route('/devices/', methods=['GET', 'POST'])
+@app.route('/devices/')
 def get_devices():
     if not session.get('username'):
         return redirect(url_for('login'))
 
-    user_id = session.get('user_id')
-    print(user_id)
-    users = Users.query.all()
-    return render_template("devices.html", title="Login", users=users, devices=True)
+    devicesList = Devices.query.all()
+    return render_template("devices.html", title="Devices", data=devicesList, devices=True)
+
+
+@app.route('/delete_devices', methods=['GET', 'POST'])
+def delete_device():
+    form = AddDevice()
+    if form.submit():
+        data = request.form
+        device_id = data['device_id']
+
+        device = Devices.query.filter_by(device_id=device_id).first()
+        if device:
+            try:
+                db.session.delete(device)
+                db.session.commit()
+                flash("Device successfully deleted", "success")
+            except:
+                flash("Device not deleted", "danger")
+
+    return redirect(url_for('get_devices'))
+
+@app.route('/devices/stream/<platform>', methods=['GET', 'POST'])
+def devices_stream(platform):
+    print(platform)
+    if not session.get('username'):
+        return redirect(url_for('login'))
+
+    return render_template('/stream.html', platform=platform)
+
+@app.route('/devices/watch/<platform>', methods=['GET', 'POST'])
+def devices_watch(platform):
+    print(platform)
+    if not session.get('username'):
+        return redirect(url_for('login'))
+
+    return render_template('/watch.html', platform=platform)
+
+

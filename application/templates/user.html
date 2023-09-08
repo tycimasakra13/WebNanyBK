@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1>Users</h1>
+
+
+<div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">User ID</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">E-mail</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <!-- Construct the rest of courses here -->
+        {% for usr in users %}
+            <tr>
+                <td scope="row">{{ usr["id"] }}</td>
+                <td>{{ usr["first_name"] }}</td>
+                <td>{{ usr["last_name"] }}</td>
+                <td>{{ usr["e_mail"] }}</td>
+                <td>
+                    <form action="{{url_for('home')}}" method="POST">
+                        <button>Stream</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="{{url_for('home')}}" method="POST">
+                        <button>Watch</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
