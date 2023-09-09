@@ -7,6 +7,8 @@ WTForms~=3.0.1
 email-validator~=2.0.0
 numpy~=1.25.2
 opencv-python-headless~=4.8.0.76
+google-cloud-video-live-stream~=1.5.1
+
 
 
 

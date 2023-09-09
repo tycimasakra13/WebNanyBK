@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", function() {
 let camera_button = document.querySelector("#start-camera");
 let video = document.querySelector("#video");
 let start_button = document.querySelector("#start-record");
-let stop_button = document.querySelector("#stop-record");
+let stop_record = document.querySelector("#stop-record");
+let stop_button = document.querySelector("#stop-button");
 let download_link = document.querySelector("#download-video");
 
 let camera_stream = null;
@@ -37,7 +38,13 @@ start_button.addEventListener('click', function() {
     media_recorder.start(1000);
 });
 
-stop_button.addEventListener('click', function() {
+stop_record.addEventListener('click', function() {
+    console.log('stop');
 	media_recorder.stop();
 });
+
+stop_button.addEventListener('click', function () {
+    console.log('stop button');
+    camera_stream.stop();
+})
 });
