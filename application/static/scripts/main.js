@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             socket.emit('image', frameData);
 
-            setTimeout(sendFrameToServer, 1000/1000);
+            setTimeout(sendFrameToServer, 1000/30);
         }
     }
 
