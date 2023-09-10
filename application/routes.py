@@ -1,7 +1,7 @@
 import base64
 
 import numpy as np
-from flask.json import dump
+from flask.json import dump, jsonify
 from flask_socketio import emit
 from sqlalchemy import MetaData
 import json, time
@@ -25,6 +25,18 @@ total_frames = 100
 @app.route('/', methods=['GET'])
 def home():
     return 'Hello World'
+
+
+@app.route('/negotiate', methods=['GET'])
+def negotiate():
+    user_id = request.args.get('id')
+    user_id = 123
+    if not user_id:
+        return ('missing user id', 400)
+
+    token = socketio.get_client_access_token(user_id=user_id)
+
+    return jsonify({'url': user_id})
 
 
 @app.route('/index')

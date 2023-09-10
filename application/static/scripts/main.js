@@ -16,8 +16,17 @@ document.addEventListener("DOMContentLoaded", function() {
     let connection_string='https://webnany.webpubsub.azure.com';
     let hub='/clients/socketio/hubs/Hub';
     const socket = io("https://webnany.webpubsub.azure.com", {
-        path: "/clients/socketio/hubs/Hub",
+        path: "/clients/socketio/hubs/webnany",
     });
+    //
+    //     var socket = io({
+    //         cors: {
+    //             //origin: "http://localhost:5000/stream", // Specify your allowed origin
+    //             origin: connection_string,
+    //             methods: ["GET", "POST"],
+    //             pathname: "/clients/socketio/hubs/Hub",
+    //         }
+    //     });
     let camera_button = document.querySelector("#start-camera");
     let photo = document.querySelector("#imgElement");
     let video = document.querySelector("#video");
@@ -31,14 +40,14 @@ document.addEventListener("DOMContentLoaded", function() {
     let blobs_recorded = [];
     let isStreaming = false;
 
+    //
+    // socket.on("connect", function () {
+    //   console.log("Connected...!", socket.connected);
+    // });
 
-    socket.on("connect", function () {
-      console.log("Connected...!", socket.connected);
-    });
-
-    socket.on("disconnect", function () {
-      console.log("Connected...!", socket.connected);
-    });
+    // socket.on("disconnect", function () {
+    //   console.log("Connected...!", socket.connected);
+    // });
 
     camera_button.addEventListener('click', async function() {
         camera_stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -105,15 +114,16 @@ document.addEventListener("DOMContentLoaded", function() {
             //     }
             // });
 
-            socket.emit('image', frameData);
+            // socket.emit('image', frameData);
 
+            socket.send('image', frameData);
             setTimeout(sendFrameToServer, 1000/30);
 
         }
     }
 
-    socket.on("processed_image", function (image) {
-      photo.setAttribute("src", image);
-    });
+    // socket.on("processed_image", function (image) {
+    //   photo.setAttribute("src", image);
+    // });
 
 });

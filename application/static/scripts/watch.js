@@ -1,7 +1,7 @@
 console.log("test watch js");
 document.addEventListener("DOMContentLoaded", function() {
     // Code to be executed when the DOM is ready
-    const ws = new WebSocket("ws://127.0.0.1:5000/stream")
+  //  const ws = new WebSocket("ws://127.0.0.1:5000/stream")
     //const socket = io.connect();
     const videoElement = document.getElementById("videoElement");
     const frameRate = 1;
@@ -10,10 +10,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let frameIndex = 1;
     const img = document.getElementById("imgElement");
-
-    ws.addEventListener("connect", () => {
-        console.log("websocket conn");
-    });
+    //
+    // ws.addEventListener("connect", () => {
+    //     console.log("websocket conn");
+    // });
 
 
 
