@@ -251,20 +251,20 @@ def stream():
     print('strem')
     return "connect"
 
+#
+# @socketio.on("connect")
+# def test_connect():
+#     print("Connected")
+#     emit("my response", {"data": "Connected"})
+# @socketio.on("disconnect")
+# def handle_disconnection():
+#     print("Client disconnected")
+#
 
-@socketio.on("connect")
-def test_connect():
-    print("Connected")
-    emit("my response", {"data": "Connected"})
-@socketio.on("disconnect")
-def handle_disconnection():
-    print("Client disconnected")
-
-
-@socketio.on("message")
-def handle_message(message):
-    # Broadcast the received frame to all connected clients
-    socketio.emit("message", message, broadcast=True)
+# @socketio.on("message")
+# def handle_message(message):
+#     # Broadcast the received frame to all connected clients
+#     socketio.emit("ping", message, broadcast=True)
 
 def base64_to_image(base64_string):
     # Extract the base64 encoded binary data from the input string
@@ -278,6 +278,7 @@ def base64_to_image(base64_string):
     return image
 
 
-@socketio.on("image")
-def receive_image(image):
-    emit("processed_image", image)
+# @socketio.on("image")
+# def receive_image(image):
+#     emit("processed_image", image)
+#

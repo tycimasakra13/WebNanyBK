@@ -4,13 +4,20 @@ console.log("test main js");
 document.addEventListener("DOMContentLoaded", function() {
     // Code to be executed when the DOM is ready
     //var socket = io.connect();
-    var socket = io({
-            cors: {
-                //origin: "http://localhost:5000/stream", // Specify your allowed origin
-                origin: "https://webnanyae.azurewebsites.net/stream",
-                methods: ["GET", "POST"]
-            }
-        });
+    // var socket = io({
+    //         cors: {
+    //             //origin: "http://localhost:5000/stream", // Specify your allowed origin
+    //             origin: "https://webnanyae.azurewebsites.net/stream",
+    //             methods: ["GET", "POST"]
+    //         }
+    //     });
+
+
+    let connection_string='https://webnany.webpubsub.azure.com';
+    let hub='/clients/socketio/hubs/Hub';
+    const socket = io("https://webnany.webpubsub.azure.com", {
+        path: "/clients/socketio/hubs/Hub",
+    });
     let camera_button = document.querySelector("#start-camera");
     let photo = document.querySelector("#imgElement");
     let video = document.querySelector("#video");
@@ -101,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function() {
             socket.emit('image', frameData);
 
             setTimeout(sendFrameToServer, 1000/30);
+
         }
     }
 
