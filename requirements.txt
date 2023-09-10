@@ -9,6 +9,8 @@ numpy~=1.25.2
 opencv-python-headless~=4.8.0.76
 google-cloud-video-live-stream~=1.5.1
 Flask-SocketIO~=5.3.6
+azure-messaging-webpubsubservice~=1.0.1
+
 
 
 
