@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var socket = io({
             cors: {
                 //origin: "http://localhost:5000/stream", // Specify your allowed origin
-                origin: "http://webnanyae.azurewebsites.net/stream",
+                origin: "https://webnanyae.azurewebsites.net/stream",
                 methods: ["GET", "POST"]
             }
         });
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             socket.emit('image', frameData);
 
-            requestAnimationFrame(sendFrameToServer);
+            setTimeout(sendFrameToServer, 1000/1000);
         }
     }
 
