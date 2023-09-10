@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var socket = io({
             cors: {
                 //origin: "http://localhost:5000/stream", // Specify your allowed origin
-                origin: "https://webnanyae.azurewebsites.net/stream",
+                origin: "http://webnanyae.azurewebsites.net/stream",
                 methods: ["GET", "POST"]
             }
         });
