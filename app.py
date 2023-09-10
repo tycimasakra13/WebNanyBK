@@ -1,7 +1,7 @@
-from application import app
+from application import app, socketio
 
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    socketio.run(app, debug=True)
 
 # @app.route('/login', methods=['POST', 'GET'])
 # def login():

@@ -1,20 +1,28 @@
+import base64
+
+import numpy as np
 from flask.json import dump
+from flask_socketio import emit
 from sqlalchemy import MetaData
 import json, time
 
-from application import app, db
-from flask import render_template, request, Response, json, redirect, flash, url_for, session
+from application import app, db, socketio
+from flask import render_template, request, Response, json, redirect, flash, url_for, session, send_file
 from application.forms import LoginForm, RegisterForm, AddDevice
 from application.models import Users, Devices
 import cv2
-
+from flask_socketio import SocketIO, emit
 import argparse
 
 from google.cloud.video.live_stream_v1.services.livestream_service import LivestreamServiceClient
 from google.protobuf import empty_pb2 as empty
+import os
 
+frame_save_dir = "stream_feed"
+os.makedirs(frame_save_dir, exist_ok=True)
+total_frames = 100
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def home():
     return 'Hello World'
 
@@ -168,7 +176,57 @@ def devices_watch(platform):
         return redirect(url_for('login'))
 
     return render_template('/watch.html', platform=platform)
-#
+
+@app.route('/json_test', methods=['GET','POST'])
+def json_get():
+    data = request.get_json()
+    frame_data = data["frameData"]
+    frame_bytes = base64.b64decode(frame_data.split(",")[1])
+    frame_np = np.frombuffer(frame_bytes, dtype=np.uint8)
+    frame = cv2.imdecode(frame_np, cv2.IMREAD_COLOR)
+
+    for frame_index in range(1, total_frames+1):
+        filename = f"frame_{frame_index}.jpg"
+        print(str(filename))
+        save_path = os.path.join(frame_save_dir, filename)
+        print(save_path)
+        if frame_index > total_frames:
+            frame_index = 1
+
+        if not os.path.exists(save_path):
+            print("exists")
+            cv2.imwrite(save_path, frame)
+            return f"Frame {save_path} received and saved"
+
+    return "ok"
+
+@app.route("/devices/watch/stream_feed/<int:frame_index>", methods=['GET'])
+def stream_feed(frame_index):
+    filename = f"frame_{frame_index}.jpg"
+    frame_path = f"../{frame_save_dir}/{filename}"
+    print(frame_path)
+   # if os.path.exists(frame_path):
+    return send_file(frame_path, mimetype="image/jpeg")
+    #else:
+    #    return "frame not found", 404
+
+
+def gen_frames(data):
+    print(data)
+    # while True:
+        # success, frame = [1, 2]
+        # print(success)
+        # print(frame)
+        # if not success:
+        #     break
+        # if not success:
+        #     break
+        # else:
+        #     ret, buffer = cv2.imencode('.jpg', frame)
+        #     frame = buffer.tobytes()
+        #     yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+
 # def gen_frames():
 #     camera = cv2.VideoCapture(0)
 #     #camera = VideoStream(src=0).start()
@@ -186,3 +244,40 @@ def devices_watch(platform):
 # @app.route('/camera')
 # def video_feed():
 #     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+#
+
+@app.route('/stream', methods=['GET'])
+def stream():
+    print('strem')
+    return "connect"
+
+
+@socketio.on("connect")
+def test_connect():
+    print("Connected")
+    emit("my response", {"data": "Connected"})
+@socketio.on("disconnect")
+def handle_disconnection():
+    print("Client disconnected")
+
+
+@socketio.on("message")
+def handle_message(message):
+    # Broadcast the received frame to all connected clients
+    socketio.emit("message", message, broadcast=True)
+
+def base64_to_image(base64_string):
+    # Extract the base64 encoded binary data from the input string
+    base64_data = base64_string.split(",")[1]
+    # Decode the base64 data to bytes
+    image_bytes = base64.b64decode(base64_data)
+    # Convert the bytes to numpy array
+    image_array = np.frombuffer(image_bytes, dtype=np.uint8)
+    # Decode the numpy array as an image using OpenCV
+    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+    return image
+
+
+@socketio.on("image")
+def receive_image(image):
+    emit("processed_image", image)

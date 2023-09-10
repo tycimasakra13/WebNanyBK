@@ -2,11 +2,13 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
-
+from flask_socketio import SocketIO, emit
+import base64
 
 from config import Config
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 app.config.from_object(Config)
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://postgres:admin@localhost:5432/webnany"
