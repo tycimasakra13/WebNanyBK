@@ -29,6 +29,7 @@
                 <td>{{ device["device_platform"] }}</td>
                 <td>
                     <form action="{{url_for('devices_stream',platform=device['device_platform'])}}" method="POST">
+<!--                        <button type="submit" class="btn btn-warning" {% if disabled %} disabled {% endif %}>Stream</button>-->
                         <button type="submit" class="btn btn-warning" {% if disabled %} disabled {% endif %}>Stream</button>
                     </form>
                 </td>

@@ -9,17 +9,19 @@
     <div class="row">
         <div class="col-lg-8  offset-lg-2">
             <h3 class="mt-5">Live Streaming</h3>
-
+            <div>
+                <button class="btn btn-danger" id="start-camera">Start Camera</button>
+                <button class="btn btn-secondary" id="stop-button">Stop Button</button>
+            </div>
+            <div>
+            <div class="viedoCamera">
+                <h6>Picture from camera</h6>
+                <video id="video" width="320" height="240" autoplay></video></div>
+            <div>
+                <h6>Streamed video</h6>
+                <img id="imgElement" width="320" height="240" /></div>
+            </div>
         </div>
     </div>
 </div>
-
-<button id="start-camera">Start Camera</button>
-<img id="imgElement" />
-<video id="video" width="320" height="240" autoplay></video>
-<button id="start-record">Start Recording</button>
-<button id="stop-record">Stop Recording</button>
-<button id="stop-button">Stop Button</button>
-<a id="download-video" download="test.webm">Download Video</a>
-
 {% endblock %}
