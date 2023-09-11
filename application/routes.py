@@ -281,11 +281,10 @@ gimage = None
 
 @socketio.on("image")
 def receive_image(image):
-    print("image")
     gimage = image
     socketio.emit("processed_image", image)
 
 @socketio.on("get_image")
 def receive_image():
-    print("gimage")
     socketio.emit("processed_imageget", gimage)
+

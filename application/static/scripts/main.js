@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log("isStreaming" + isStreaming);
 
-
     stop_button.addEventListener('click', function () {
         console.log('stop button');
         socket.disconnect();

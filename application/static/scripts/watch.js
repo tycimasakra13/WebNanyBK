@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-
     let frameIndex = 1;
     const img = document.getElementById("imgElement");
 
@@ -20,8 +19,6 @@ document.addEventListener("DOMContentLoaded", function() {
     socket.on("disconnect", function () {
       console.log("disconnected watch!", socket.connected);
     });
-
-
 
 
      function loadAndPlayVideo() {
