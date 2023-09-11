@@ -4,7 +4,6 @@ console.log("test main js");
 document.addEventListener("DOMContentLoaded", function() {
     // Code to be executed when the DOM is ready
     //var socket = io.connect();
-
     var socket = io({
             cors: {
                 origin: "http://localhost:5000/stream", // Specify your allowed origin
@@ -12,23 +11,23 @@ document.addEventListener("DOMContentLoaded", function() {
                 methods: ["GET", "POST"]
             }
         });
-
     let camera_button = document.querySelector("#start-camera");
     let photo = document.querySelector("#imgElement");
     let video = document.querySelector("#video");
     let stop_button = document.querySelector("#stop-button");
 
+
     let camera_stream = null;
     let isStreaming = false;
 
-    //
-    // socket.on("connect", function () {
-    //   console.log("Connected...!", socket.connected);
-    // });
 
-    // socket.on("disconnect", function () {
-    //   console.log("Connected...!", socket.connected);
-    // });
+    socket.on("connect", function () {
+      console.log("Connected...!", socket.connected);
+    });
+
+    socket.on("disconnect", function () {
+      console.log("Connected...!", socket.connected);
+    });
 
     camera_button.addEventListener('click', async function() {
         camera_stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -69,16 +68,14 @@ document.addEventListener("DOMContentLoaded", function() {
             //     }
             // });
 
-            // socket.emit('image', frameData);
+            socket.emit('image', frameData);
 
-            socket.send('image', frameData);
-            setTimeout(sendFrameToServer, 1000/30);
-
+            requestAnimationFrame(sendFrameToServer);
         }
     }
 
-    // socket.on("processed_image", function (image) {
-    //   photo.setAttribute("src", image);
-    // });
+    socket.on("processed_image", function (image) {
+      photo.setAttribute("src", image);
+    });
 
 });

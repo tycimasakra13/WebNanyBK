@@ -1,8 +1,7 @@
-from application import app, socketio, WebPubSubServiceClient
+from application import app
 
-if __name__ == "__main__":
-    socketio.run(app, debug=True)
-
+if __name__ == '__main__':
+    app.run()
 
 # @app.route('/login', methods=['POST', 'GET'])
 # def login():
