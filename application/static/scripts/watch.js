@@ -1,6 +1,7 @@
 console.log("test watch js");
 document.addEventListener("DOMContentLoaded", function() {
     // Code to be executed when the DOM is ready
+
     var socket = io({
             cors: {
                 origin: "http://localhost:5000/stream", // Specify your allowed origin
@@ -15,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
      socket.on("connect", function () {
       console.log("Connected... watch!", socket.connected);
     });
+
 
     socket.on("disconnect", function () {
       console.log("disconnected watch!", socket.connected);
