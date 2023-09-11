@@ -177,28 +177,28 @@ def devices_watch(platform):
 
     return render_template('/watch.html', platform=platform)
 
-@app.route('/json_test', methods=['GET','POST'])
-def json_get():
-    data = request.get_json()
-    frame_data = data["frameData"]
-    frame_bytes = base64.b64decode(frame_data.split(",")[1])
-    frame_np = np.frombuffer(frame_bytes, dtype=np.uint8)
-    frame = cv2.imdecode(frame_np, cv2.IMREAD_COLOR)
-
-    for frame_index in range(1, total_frames+1):
-        filename = f"frame_{frame_index}.jpg"
-        print(str(filename))
-        save_path = os.path.join(frame_save_dir, filename)
-        print(save_path)
-        if frame_index > total_frames:
-            frame_index = 1
-
-        if not os.path.exists(save_path):
-            print("exists")
-            cv2.imwrite(save_path, frame)
-            return f"Frame {save_path} received and saved"
-
-    return "ok"
+# @app.route('/json_test', methods=['GET','POST'])
+# def json_get():
+#     data = request.get_json()
+#     frame_data = data["frameData"]
+#     frame_bytes = base64.b64decode(frame_data.split(",")[1])
+#     frame_np = np.frombuffer(frame_bytes, dtype=np.uint8)
+#     frame = cv2.imdecode(frame_np, cv2.IMREAD_COLOR)
+#
+#     for frame_index in range(1, total_frames+1):
+#         filename = f"frame_{frame_index}.jpg"
+#         print(str(filename))
+#         save_path = os.path.join(frame_save_dir, filename)
+#         print(save_path)
+#         if frame_index > total_frames:
+#             frame_index = 1
+#
+#         if not os.path.exists(save_path):
+#             print("exists")
+#             cv2.imwrite(save_path, frame)
+#             return f"Frame {save_path} received and saved"
+#
+#     return "ok"
 
 @app.route("/devices/watch/stream_feed/<int:frame_index>", methods=['GET'])
 def stream_feed(frame_index):
@@ -277,7 +277,15 @@ def base64_to_image(base64_string):
     image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     return image
 
+gimage = None
 
 @socketio.on("image")
 def receive_image(image):
-    emit("processed_image", image)
+    print("image")
+    gimage = image
+    socketio.emit("processed_image", image)
+
+@socketio.on("get_image")
+def receive_image():
+    print("gimage")
+    socketio.emit("processed_imageget", gimage)
